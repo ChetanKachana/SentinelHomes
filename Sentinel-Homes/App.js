@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useMemo, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   Pressable,
   SafeAreaView,
@@ -14,16 +15,22 @@ import {
 const Tab = createBottomTabNavigator();
 
 const colors = {
-  background: '#F5F7FB',
+  background: '#EEF2F8',
   surface: '#FFFFFF',
+  surfaceElevated: '#FDFEFF',
   primary: '#1F3B73',
+  primarySoft: '#E8EEFF',
   secondary: '#3D7BFF',
   text: '#132043',
   muted: '#5C6B8A',
   border: '#E2E8F4',
   success: '#16A34A',
+  successSoft: '#DCFCE7',
   warning: '#F59E0B',
+  warningSoft: '#FEF3C7',
   danger: '#DC2626',
+  dangerSoft: '#FEE2E2',
+  shadow: '#0F172A',
 };
 
 const kpis = [
@@ -116,12 +123,21 @@ const moreModules = [
   { title: 'Settings', detail: 'Thresholds, alerts, access' },
 ];
 
+const tabIconByRoute = {
+  Overview: 'view-dashboard-outline',
+  Pipeline: 'transit-connection-variant',
+  Prints: 'printer-3d-nozzle-outline',
+  Inventory: 'warehouse',
+  Alerts: 'alert-octagon-outline',
+  More: 'dots-horizontal-circle-outline',
+};
+
 function AppShell() {
   return (
     <NavigationContainer>
       <StatusBar style="dark" />
       <Tab.Navigator
-        screenOptions={{
+        screenOptions={({ route }) => ({
           headerShown: false,
           tabBarActiveTintColor: colors.primary,
           tabBarInactiveTintColor: colors.muted,
@@ -132,7 +148,14 @@ function AppShell() {
           tabBarLabelStyle: {
             fontWeight: '600',
           },
-        }}
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name={tabIconByRoute[route.name] || 'circle-outline'}
+              color={color}
+              size={size}
+            />
+          ),
+        })}
       >
         <Tab.Screen name="Overview" component={OverviewScreen} />
         <Tab.Screen name="Pipeline" component={PipelineScreen} />
@@ -514,11 +537,16 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.surface,
-    borderRadius: 16,
+    borderRadius: 18,
     padding: 16,
     borderWidth: 1,
     borderColor: colors.border,
     marginBottom: 12,
+    shadowColor: colors.shadow,
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 3,
   },
   kpiRow: {
     marginBottom: 8,
@@ -526,6 +554,8 @@ const styles = StyleSheet.create({
   kpiCard: {
     width: 160,
     marginRight: 12,
+    backgroundColor: colors.surfaceElevated,
+    borderColor: colors.primarySoft,
   },
   kpiValue: {
     fontSize: 20,
@@ -538,9 +568,16 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   kpiDelta: {
-    marginTop: 8,
-    fontWeight: '600',
+    marginTop: 10,
+    fontWeight: '700',
     color: colors.success,
+    backgroundColor: colors.successSoft,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 999,
+    overflow: 'hidden',
+    alignSelf: 'flex-start',
+    fontSize: 12,
   },
   chartRow: {
     flexDirection: 'row',
@@ -556,10 +593,14 @@ const styles = StyleSheet.create({
     color: colors.text,
     marginBottom: 12,
   },
-  chartPlaceholder: {},
+  chartPlaceholder: {
+    backgroundColor: colors.background,
+    borderRadius: 12,
+    padding: 12,
+  },
   chartBar: {
     height: 8,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary,
     borderRadius: 4,
     marginBottom: 8,
   },
@@ -604,9 +645,14 @@ const styles = StyleSheet.create({
   },
   chipActive: {
     backgroundColor: colors.primary,
+    shadowColor: colors.shadow,
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
   },
   chipInactive: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceElevated,
     borderWidth: 1,
     borderColor: colors.border,
   },
@@ -640,7 +686,7 @@ const styles = StyleSheet.create({
   segmented: {
     flexDirection: 'row',
     marginBottom: 16,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceElevated,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.border,
@@ -654,6 +700,11 @@ const styles = StyleSheet.create({
   },
   segmentActive: {
     backgroundColor: colors.primary,
+    shadowColor: colors.shadow,
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
   },
   segmentInactive: {
     backgroundColor: 'transparent',
@@ -666,7 +717,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
   },
-  printCard: {},
+  printCard: {
+    borderLeftWidth: 4,
+    borderLeftColor: colors.primarySoft,
+  },
   printMeta: {
     marginTop: 6,
   },
@@ -675,8 +729,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   statusText: {
-    fontWeight: '600',
+    fontWeight: '700',
     color: colors.primary,
+    backgroundColor: colors.primarySoft,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 999,
+    overflow: 'hidden',
+    fontSize: 12,
   },
   actionRow: {
     flexDirection: 'row',
@@ -688,8 +748,8 @@ const styles = StyleSheet.create({
     marginRight: 18,
   },
   alertBanner: {
-    backgroundColor: '#FFF4E5',
-    borderColor: '#FAD7A0',
+    backgroundColor: colors.warningSoft,
+    borderColor: '#F8C27E',
   },
   alertTitle: {
     fontWeight: '700',
@@ -705,9 +765,15 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: 'center',
+    shadowColor: colors.shadow,
+    shadowOpacity: 0.18,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 3,
   },
   primaryButtonText: {
     color: '#fff',
     fontWeight: '700',
+    letterSpacing: 0.3,
   },
 });
